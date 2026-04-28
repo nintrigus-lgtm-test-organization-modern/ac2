@@ -1,0 +1,35 @@
+name: Branch Cache Depot
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  echo-branch:
+    runs-on: depot-ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Restore cached branch name
+        uses: actions/cache/restore@v4
+        with:
+          path: branch-cache.txt
+          key: branch-cache-depot-${{ github.run_id }}
+          restore-keys: branch-cache-depot
+
+      - name: Echo cached branch name
+        run: |
+          if [ -f branch-cache.txt ]; then
+            echo "Cached branch: $(cat branch-cache.txt)"
+          else
+            echo "default-branch"
+          fi
+
+      - name: Update cached branch name
+        run: echo "${{ github.ref_name }}-${{ github.actor }}-${{ github.triggering_actor }}" > branch-cache.txt
+
+      - name: Save branch name to cache
+        uses: actions/cache/save@v4
+        with:
+          path: branch-cache.txt
+          key: branch-cache-depot-${{ github.run_id }}
