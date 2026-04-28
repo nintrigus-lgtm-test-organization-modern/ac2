@@ -24,6 +24,10 @@ jobs:
           else
             echo "default-branch"
           fi
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
 
       - name: Update cached branch name
         run: echo "${{ github.ref_name }}-${{ github.actor }}-${{ github.triggering_actor }}" > branch-cache.txt
